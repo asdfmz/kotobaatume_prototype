@@ -1,0 +1,7 @@
+<h1>Words in Repo {{ repo_id }}</h1>
+<ul>
+    {% for word in words %}
+        <li>{{ word.word_text }} - {{ word.note }}</li>
+    {% endfor %}
+</ul>
+<p><a href="/add_word/{{ repo_id }}">Add Word</a></p>

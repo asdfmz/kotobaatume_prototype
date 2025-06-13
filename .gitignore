@@ -1,0 +1,17 @@
+# Pythonのキャッシュ
+__pycache__/
+*.pyc
+*.pyo
+
+# 仮想環境
+venv/
+
+# インスタンスディレクトリ内のデータベース
+instance/data.db
+
+# その他の一般的な無視対象
+*.log
+*.sqlite
+*.sqlite3
+.DS_Store
+.vscode/
