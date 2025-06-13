@@ -2,12 +2,6 @@
 
 from models import db, User, Repository, Word
 
-def create_user(username):
-    user = User(username=username)
-    db.session.add(user)
-    db.session.commit()
-    return user
-
 def create_repo(user_id, name, is_public=True):
     repo = Repository(name=name, user_id=user_id, is_public=is_public)
     db.session.add(repo)
@@ -42,3 +36,19 @@ def get_repos_by_user(user_id):
 
 def get_words_by_repo(repo_id):
     return Word.query.filter_by(repo_id=repo_id).all()
+
+
+def register_user(username, password):
+    if User.query.filter_by(username=username).first():
+        return None # 既に存在
+    user = User(username=username)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+def authenticate_user(username, password):
+    user = User.query.filter_by(username=username).first()
+    if user and user.check_password(password):
+        return user
+    return None

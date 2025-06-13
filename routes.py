@@ -2,7 +2,7 @@
 
 # 仮ログイン状態として「常にuser_id=1とみなす」構成で、画面遷移だけ動かす
 
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, session, flash
 from models import db
 import services
 
@@ -14,7 +14,9 @@ def index():
 
 @main_bp.route("/dashboard")
 def dashboard():
-    user_id = 1  # 仮ログイン
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect("/login")
     repos = services.get_repos_by_user(user_id)
     return render_template("dashboard.html", repos=repos)
 
@@ -52,3 +54,32 @@ def delete_word(word_id):
     repo_id = word.repo_id if word else 0
     services.delete_word(word_id)
     return redirect(f"/repos/{repo_id}")
+
+@main_bp.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        user = services.register_user(username, password)
+        if user:
+            session["user_id"] = user.id
+            return redirect("/dashboard")
+        flash("Username already exsists")
+    return render_template("signup.html")
+
+@main_bp.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        user = services.authenticate_user(username, password)
+        if user:
+            session["user_id"] = user.id
+            return redirect("/dashboard")
+        flash("Invalid credentials")
+    return render_template("login.html")
+
+@main_bp.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
