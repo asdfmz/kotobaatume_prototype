@@ -20,6 +20,23 @@ def add_word(repo_id, word_text, note=""):
     db.session.commit()
     return word
 
+def get_word_by_id(word_id):
+    return Word.query.get(word_id)
+
+def update_word(word_id, new_text, new_note):
+    word = Word.query.get(word_id)
+    if word:
+        word.word_text = new_text
+        word.note = new_note
+        db.session.commit()
+    return word
+
+def delete_word(word_id):
+    word = Word.query.get(word_id)
+    if word:
+        db.session.delete(word)
+        db.session.commit()
+
 def get_repos_by_user(user_id):
     return Repository.query.filter_by(user_id=user_id).all()
 

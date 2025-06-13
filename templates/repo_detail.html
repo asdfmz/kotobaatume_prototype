@@ -2,6 +2,10 @@
 <ul>
     {% for word in words %}
         <li>{{ word.word_text }} - {{ word.note }}</li>
+        [<a href="/edit_word/{{ word.id }}">Edit</a>]
+        <form method="POST" action="/delete_word/{{ word.id }}" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
     {% endfor %}
 </ul>
 <p><a href="/add_word/{{ repo_id }}">Add Word</a></p>

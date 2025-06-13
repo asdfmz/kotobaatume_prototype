@@ -31,3 +31,24 @@ def add_word(repo_id):
         services.add_word(repo_id, word_text, note)
         return redirect(f"/repos/{repo_id}")
     return render_template("add_word.html", repo_id=repo_id)
+
+@main_bp.route("/edit_word/<int:word_id>", methods=["GET", "POST"])
+def edit_word(word_id):
+    word = services.get_word_by_id(word_id)
+    if not word:
+        return "Word not found", 404
+    
+    if request.method == "POST":
+        new_text = request.form["word_text"]
+        new_note = request.form["note"]
+        services.update_word(word_id, new_text, new_note)
+        return redirect(f"/repos/{word.repo_id}")
+    
+    return render_template("edit_word.html", word=word)
+
+@main_bp.route("/delete_word/<int:word_id>", methods=["POST"])
+def delete_word(word_id):
+    word = services.get_word_by_id(word_id)
+    repo_id = word.repo_id if word else 0
+    services.delete_word(word_id)
+    return redirect(f"/repos/{repo_id}")
