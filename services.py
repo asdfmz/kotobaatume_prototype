@@ -8,6 +8,23 @@ def create_repo(user_id, name, is_public=True):
     db.session.commit()
     return repo
 
+def get_repo_by_id(repo_id):
+    return Repository.query.get(repo_id)
+
+def update_repo_name(repo_id, new_name):
+    repo = Repository.query.get(repo_id)
+    if repo:
+        repo.name = new_name
+        db.session.commit()
+    return repo
+
+def delete_repo(repo_id):
+    repo = Repository.query.get(repo_id)
+    if repo:
+        Word.query.filter_by(repo_id=repo_id).delete()
+        db.session.delete(repo)
+        db.session.commit()
+
 def add_word(repo_id, word_text, note=""):
     word = Word(repo_id=repo_id, word_text=word_text, note=note)
     db.session.add(word)

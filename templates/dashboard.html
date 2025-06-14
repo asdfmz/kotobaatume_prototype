@@ -2,5 +2,11 @@
 <ul>
     {% for repo in repos %}
         <li><a href="/repos/{{ repo.id }}">{{ repo.name }}</a></li>
+        [<a href="/edit_repo/{{ repo.id }}">Edit</a>]
+        <form method="POST" action="/delete_repo/{{ repo.id }}" stype="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
     {% endfor %}
 </ul>
+
+<p><a href="/create_repo">+ Create New Repository</a></p>

@@ -25,6 +25,38 @@ def repo_detail(repo_id):
     words = services.get_words_by_repo(repo_id)
     return render_template("repo_detail.html", repo_id=repo_id, words=words)
 
+@main_bp.route("/create_repo", methods=["GET", "POST"])
+def create_repo_route():
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect("/login")
+    
+    if request.method == "POST":
+        name = request.form["name"]
+        is_public = "is_public" in request.form
+        services.create_repo(user_id, name, is_public)
+        return redirect("/dashboard")
+    
+    return render_template("create_repo.html")
+
+@main_bp.route("/edit_repo/<int:repo_id>", methods=["GET", "POST"])
+def edit_repo(repo_id):
+    repo = services.get_repo_by_id(repo_id)
+    if not repo:
+        return "Repo not found", 404
+    
+    if request.method == "POST":
+        new_name = request.form["name"]
+        services.update_repo_name(repo_id, new_name)
+        return redirect("/dashboard")
+    
+    return render_template("edit_repo.html", repo=repo)
+
+@main_bp.route("/delete_repo/<int:repo_id>", methods=["POST"])
+def delete_repo_route(repo_id):
+    services.delete_repo(repo_id)
+    return redirect("/dashboard")
+
 @main_bp.route("/add_word/<int:repo_id>", methods=["GET", "POST"])
 def add_word(repo_id):
     if request.method == "POST":
